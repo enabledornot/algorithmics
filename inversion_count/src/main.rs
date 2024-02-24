@@ -18,10 +18,11 @@ fn slowInvertCount(ary: &Vec<i32>) -> i32 {
     }
     return icount;
 }
-fn merge(ary: &mut [i32], mid: usize) {
+fn merge(ary: &mut [i32], mid: usize) -> usize {
     let mut merged: Vec<i32> = Vec::new();
     let mut i = 0;
     let mut j = mid;
+    let mut inv_count = 0;
     while i < mid && j < ary.len() {
         let iel = ary[i];
         let jel = ary[j];
@@ -31,6 +32,7 @@ fn merge(ary: &mut [i32], mid: usize) {
         }
         else {
             merged.push(jel);
+            inv_count = inv_count + mid - i;
             j = j + 1;
         }
     }
@@ -40,23 +42,27 @@ fn merge(ary: &mut [i32], mid: usize) {
     }
     while j < ary.len() {
         merged.push(ary[j]);
+        inv_count = inv_count + mid - i;
         j = j + 1;
     }
     ary.clone_from_slice(&merged);
+    return inv_count;
 }
-fn mergeSort(ary: &mut [i32]) {
+fn mergeSort(ary: &mut [i32]) -> usize {
+    let mut inv_count = 0;
     if ary.len() > 1 {
         let mid = ary.len()/2;
-        mergeSort(&mut ary[0..mid]);
-        mergeSort(&mut ary[mid..]);
-        merge(ary, mid);
+        inv_count+=mergeSort(&mut ary[0..mid]);
+        inv_count+=mergeSort(&mut ary[mid..]);
+        inv_count+=merge(ary, mid);
     }
+    return inv_count;
 }
 fn main() {
     let mut rand_array = randArray(10);
     println!("{:?}",rand_array);
     let invCount = slowInvertCount(&rand_array);
     println!("{:?}", invCount);
-    mergeSort(&mut rand_array);
-    println!("{:?}",rand_array);
+    let invCountFast = mergeSort(&mut rand_array);
+    println!("{:?} - {:?}",rand_array,invCountFast);
 }
