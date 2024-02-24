@@ -7,7 +7,20 @@ fn randArray(length: i32) -> Vec<i32> {
     }
     return result;
 }
+fn slowInvertCount(ary: Vec<i32>) -> i32 {
+    let mut icount: i32 = 0;
+    for i in 0..ary.len() {
+        for j in (i+1)..ary.len() {
+            if ary.get(i) > ary.get(j) {
+                icount+=1;
+            }
+        }
+    }
+    return icount;
+}
 fn main() {
-    let rand_array = randArray(50);
+    let rand_array = randArray(10);
     println!("{:?}",rand_array);
+    let invCount = slowInvertCount(rand_array);
+    println!("{:?}", invCount);
 }
