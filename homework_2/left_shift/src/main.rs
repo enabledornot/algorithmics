@@ -6,6 +6,8 @@ fn generate_seq_ary(length: i32) -> Vec<i32> {
     return rslt;
 }
 
+
+// divide and conquer
 fn req_swap(ary: &mut [i32], k: usize) -> usize{
     let mut i = 0;
     let mut j = k;
@@ -17,7 +19,7 @@ fn req_swap(ary: &mut [i32], k: usize) -> usize{
     return i;
 }
 
-fn shift_n(ary: &mut [i32], amnt: usize) {
+fn shift_n_divide(ary: &mut [i32], amnt: usize) {
     let c = req_swap(ary, amnt);
     if c == 0 {
         return
@@ -30,6 +32,8 @@ fn shift_n(ary: &mut [i32], amnt: usize) {
     }
 
 }
+
+
 
 fn main() {
     let mut seq_arry = generate_seq_ary(14);
