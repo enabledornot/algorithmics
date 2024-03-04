@@ -1,6 +1,7 @@
 use rand::{Rng, thread_rng};
 
 #[derive(Debug)]
+#[derive(PartialEq)]
 struct Point {
     x: f32,
     y: f32
@@ -21,6 +22,9 @@ fn brute_force(points: &Vec<Point>) -> f32 {
     let mut min = f32::MAX;
     for x in points.iter() {
         for y in points.iter() {
+            if x == y {
+                continue;
+            }
             let ndist = x.dist_to_sqr(y);
             if ndist < min {
                 min = ndist;
@@ -52,4 +56,6 @@ fn print_points(points: &Vec<Point>) {
 fn main() {
     let points = create_n_points(10);
     print_points(&points);
+    let min_dist = brute_force(&points);
+    println!("{:?}",min_dist);
 }
