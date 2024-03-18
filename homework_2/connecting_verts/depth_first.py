@@ -14,6 +14,13 @@ class graph:
             self.fill_random(amnt)
             self.goal = amnt-1
             self.start = 0
+    def __str__(self):
+        output = "GRAPH\n"
+        c = 0
+        for vertices in self.vertices:
+            output += "{} -> {}\n".format(c,str(vertices))
+            c += 1
+        return output
     def fill_random(self,amnt):
         for i in range(amnt):
             paths = []
@@ -51,6 +58,7 @@ class accepted_edges:
         return False
         
 G = graph(amnt=5)
+print(G)
 AE = accepted_edges(G)
 AE.find_accepting()
 print("ACCEPTING")
