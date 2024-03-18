@@ -19,8 +19,8 @@ fn req_swap(ary: &mut [i32], k: usize) -> usize{
     return i;
 }
 fn shift_n_divide(ary: &mut [i32], amnt: usize) {
-    let len = ary.len();
-    shift_n_divide_rec(ary, len-amnt);
+    // let len = ary.len();
+    shift_n_divide_rec(ary, amnt);
 }
 fn shift_n_divide_rec(ary: &mut [i32], amnt: usize) {
     let c = req_swap(ary, amnt);
@@ -44,8 +44,9 @@ fn gcd(m: usize, n: usize) -> usize {
     return gcd(n, m % n);
 }
 
-fn shift_n_shuffle(ary: &mut [i32], amnt: usize) {
+fn shift_n_shuffle(ary: &mut [i32], amntt: usize) {
     let len = ary.len();
+    let amnt = len-amntt;
     for i in 0..gcd(len,amnt) {
         let mut cnt = (i+amnt)%len;
         let mut last = ary[i];
@@ -62,11 +63,11 @@ fn shift_n_shuffle(ary: &mut [i32], amnt: usize) {
 fn main() {
     println!("By divide and conquer");
     let mut seq_arry = generate_seq_ary(14);
-    shift_n_divide(&mut seq_arry,12);
+    shift_n_divide(&mut seq_arry,6);
     println!("{:?}",seq_arry);
 
     println!("By shuffle method");
     seq_arry = generate_seq_ary(14);
-    shift_n_shuffle(&mut seq_arry,12);
+    shift_n_shuffle(&mut seq_arry,6);
     println!("{:?}",seq_arry);
 }
