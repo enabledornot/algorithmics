@@ -36,7 +36,10 @@ class accepted_edges:
         self.accepting = [graph.goal]
         self.denying = []
         self.locked = []
-    def find_accepting(self,start=None):
+    def find_accepting(self):
+        while self.find_accepting_r() != None:
+            pass
+    def find_accepting_r(self,start=None):
         # print(self.to_explore)
         if start in self.denying or start in self.locked:
             return False
@@ -49,7 +52,7 @@ class accepted_edges:
         self.to_explore.remove(start)
         self.locked.append(start)
         for v in self.graph.vertices[start]:
-            if self.find_accepting(start=v):
+            if self.find_accepting_r(start=v):
                 self.locked.remove(start)
                 self.accepting.append(start)
                 return True
