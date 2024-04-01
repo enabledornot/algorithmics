@@ -1,4 +1,5 @@
 import random
+import ipdb
 # helper
 def rand_int_ary(n):
     ary = []
@@ -14,7 +15,11 @@ def make_empty(n,default=0):
     return ary
 def print_ary(a):
     for r in a:
-        print(r)
+        for e in r:
+            print(e,end="")
+            for v in range(5-len(str(e))):
+                print(" ",end="")
+        print("")
     print("")
 # first stage
 def divide_up(ary):
@@ -47,6 +52,7 @@ def find_distances(mask,weights):
     minimum_distances = []
     for i in range(1,len(weights)-1):
         minimum_distances.append(dijkstra_multi(mask,i,len(weights)))
+        break
     return minimum_distances
 def dijkstra_multi(mask,bound,n_chunks):
     min_dists = [-1]*n_chunks
@@ -58,36 +64,46 @@ def dijkstra_multi(mask,bound,n_chunks):
         for j in range(n):
             if mask[i][j] == bound:
                 weights[i][j] = 0
-            if mask[i][j] >= bound or mask[i][j] < 0:
+                to_explore.append((i,j))
+            if mask[i][j] > bound or mask[i][j] < 0:
                 weights[i][j] = -1
                 to_explore.append((i,j))
-    while len(to_explore) != 0:
-        c = find_min_and_remove(to_explore,weights)
+    # while len(to_explore) != 0:
+    while (c := find_min_and_remove(to_explore,weights)) is not None:
+        # c = find_min_and_remove(to_explore,weights)
+        # ipdb.set_trace()
         for d in [[0,1],[0,-1],[1,0],[-1,0]]:
             p = (c[0]+d[0],c[1]+d[1])
-            if p[0] < 0 or p[1] < 0 or p[0] == n or p[1] == n or weights[p[0]][p[1]] == -2:
+            if p[0] < 0 or p[1] < 0 or p[0] == n or p[1] == n or weights[p[0]][p[1]] == -2 or weights[p[0]][p[1]] == 0:
                 continue
             if mask[p[0]][p[1]] > 0:
                 pdist = weights[c[0]][c[1]]
-                if pdist < min_dists[mask[p[0]][p[1]]] or min_dists[mask[p[0]][p[1]]]==0:
+                if pdist < min_dists[mask[p[0]][p[1]]] or min_dists[mask[p[0]][p[1]]]==-1:
                     min_dists[mask[p[0]][p[1]]] = pdist
             else:
-                pdist = weights[c[0]][c[1]] + -1*mask[p[0]][p[1]]
+                pdist = weights[c[0]][c[1]] + (-1*mask[p[0]][p[1]])
                 if pdist < weights[p[0]][p[1]] or weights[p[0]][p[1]] == -1:
                     weights[p[0]][p[1]] = pdist
+    print_ary(weights)
     return min_dists
 def find_min_and_remove(to_explore,mask):
-    min = mask[to_explore[0][0]][to_explore[0][1]]
-    min_i = 0
-    for e in range(1,len(to_explore)):
+    min = 1000000000000
+    min_i = -1
+    for e in range(len(to_explore)):
         p_e = to_explore[e]
         p_min = mask[p_e[0]][p_e[1]]
+        if p_min == -1:
+            continue
         if min > p_min:
             min_i = e
             min = p_min
+    if min == 1000000000000:
+        return None
     return to_explore.pop(min_i)
     
-iary = rand_int_ary(5)
+iary = rand_int_ary(4)
+# iary = [[-13, 97, -13, -89], [97, -69, 56, 86], [-75, 14, 21, -45], [-85, 67, -3, -78]]
+print(iary)
 print_ary(iary)
 mary, cc = divide_up(iary)
 print_ary(mary)
