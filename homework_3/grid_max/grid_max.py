@@ -52,7 +52,6 @@ def find_distances(mask,weights):
     minimum_distances = []
     for i in range(1,len(weights)-1):
         minimum_distances.append(dijkstra_multi(mask,i,len(weights)))
-        break
     return minimum_distances
 def dijkstra_multi(mask,bound,n_chunks):
     min_dists = [-1]*n_chunks
@@ -68,10 +67,7 @@ def dijkstra_multi(mask,bound,n_chunks):
             if mask[i][j] > bound or mask[i][j] < 0:
                 weights[i][j] = -1
                 to_explore.append((i,j))
-    # while len(to_explore) != 0:
     while (c := find_min_and_remove(to_explore,weights)) is not None:
-        # c = find_min_and_remove(to_explore,weights)
-        # ipdb.set_trace()
         for d in [[0,1],[0,-1],[1,0],[-1,0]]:
             p = (c[0]+d[0],c[1]+d[1])
             if p[0] < 0 or p[1] < 0 or p[0] == n or p[1] == n or weights[p[0]][p[1]] == -2 or weights[p[0]][p[1]] == 0:
@@ -102,7 +98,6 @@ def find_min_and_remove(to_explore,mask):
     return to_explore.pop(min_i)
     
 iary = rand_int_ary(4)
-# iary = [[-13, 97, -13, -89], [97, -69, 56, 86], [-75, 14, 21, -45], [-85, 67, -3, -78]]
 print(iary)
 print_ary(iary)
 mary, cc = divide_up(iary)
