@@ -19,9 +19,10 @@ def divide_up(ary):
     current_corro = [0]
     for i in range(n):
         for j in range(n):
-            if ary[i][j] >= 0:
-                if mask[i][j] == 0:
-                    current_corro.append(explore(i,j,n,current,ary,mask))
+            if mask[i][j] == 0:
+                r = explore(i,j,n,current,ary,mask)
+                if r != 0:
+                    current_corro.append(r)
                     current+=1
     return mask,current_corro
 def explore(i,j,n,current,ary,mask):
@@ -33,6 +34,8 @@ def explore(i,j,n,current,ary,mask):
         sum += ary[i][j]
         for d in [[0,-1],[0,1],[-1,0],[1,0]]:
             sum += explore(i+d[0],j+d[1],n,current,ary,mask)
+    else:
+        mask[i][j] = ary[i][j]
     return sum
 def print_ary(a):
     for r in a:
