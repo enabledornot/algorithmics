@@ -109,18 +109,26 @@ class most_efficient_path:
             node_t = node_a
             node_a = node_b
             node_b = node_t
-        return self.edge[node_b][node_a]
+        res = self.edge[node_b][node_a]
+        if res == -1:
+            asdf
+        return res
+    def most_efficient_start(self):
+        possible = [0]
+        for n in range(1,self.n):
+            potential = self.most_efficient(n,[n])
+            if potential != None:
+                possible.append(potential + self.node[n])
+        print(possible)
+        return max(possible)
     def most_efficient(self, current, prev):
-        possible = []
+        possible = [0]
         for v in range(1,self.n):
             if v not in prev:
                 potential = self.most_efficient(v,prev + [v])
                 if potential != None:
-                    possible.append(potential - self.price_between(current, v) + self.node[v])
-        if len(possible) > 0:
-            return max(possible)
-        else:
-            return None
+                    possible.append(potential + self.node[v] - self.price_between(current, v))
+        return max(possible)
 
 iary = rand_int_ary(4)
 iary = [[-18, 73, 10, -8], [76, 67, 25, 11], [-42, -30, -56, -5], [83, -86, 1, -19]]
@@ -135,5 +143,6 @@ print_ary(edge_weights)
 
 mfp = most_efficient_path(node_weights,edge_weights)
 # ipdb.set_trace()
-result = mfp.most_efficient(1,[1])
+# result = mfp.most_efficient(1,[1])
+result = mfp.most_efficient_start()
 print(result)
