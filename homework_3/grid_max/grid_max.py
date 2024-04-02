@@ -102,9 +102,9 @@ class most_efficient_path:
         self.edge = edge_weights
         self.node = node_weights
         self.n = len(node_weights)
-        self.cache = []
-        for v in range(self.n):
-            self.cache.append({})
+        self.cache = {}
+        # for v in range(self.n):
+        #     self.cache.append({})
     def price_between(self, node_a, node_b):
         if node_a == node_b:
             return 0
@@ -119,27 +119,23 @@ class most_efficient_path:
     def most_efficient_start(self):
         possible = [0]
         for n in tqdm(range(1,self.n)):
-            potential = self.most_efficient_c(n,{n})
+            potential = self.most_efficient_c({n})
             if potential != None:
                 possible.append(potential + self.node[n])
         return max(possible)
-    def most_efficient_c(self, current, prev):
-        # if len(prev) > 3:
-        #     return self.most_efficient(current, prev)
-        if str(prev) not in self.cache[current]:
-            self.cache[current][str(prev)] = self.most_efficient(current, prev)
-        return self.cache[current][str(prev)]
-    def most_efficient(self, current, prev):
+    def most_efficient_c(self, prev):
+        if str(prev) not in self.cache:
+            self.cache[str(prev)] = self.most_efficient(prev)
+        return self.cache[str(prev)]
+    def most_efficient(self, prev):
         possible = [0]
-        for v in range(1,self.n):
-            if v not in prev:
-                if (price := self.price_between(current, v)):
-                    potential = self.most_efficient_c(v,prev | {v})
-                    if potential != None:
-                        possible.append(potential + self.node[v] - price)
+        for s in range(1,self.n):
+            for e in range(1,self.n):
+                if s in prev and e not in prev:
+                    if (price := self.price_between(s, e)) and (potential := self.most_efficient_c(prev | {e}))==0:
+                        possible.append(potential + self.node[e] - price)
         return max(possible)
-
-iary = rand_int_ary(15)
+iary = rand_int_ary(10)
 # iary = [[-18, 73, 10, -8], [76, 67, 25, 11], [-42, -30, -56, -5], [83, -86, 1, -19]]
 # iary = [[22, -60, -50, 18, 26, -62, 61, 72, -33, -91, -42, 100], [-13, 24, 73, 93, -80, -95, -46, 12, 84, -14, 85, -56], [27, 73, -53, -7, -84, 80, 42, 80, -91, -28, -50, 92], [-60, -81, -21, 15, -4, 2, -100, -84, -12, -7, -83, 1], [-69, 85, 41, -71, -85, -93, 28, 90, 84, -91, -54, -50], [27, 66, 44, 8, -66, -81, -13, -75, 96, -97, 79, -69], [-50, -62, 70, 25, -98, 17, 96, -46, -1, 69, -25, 52], [-85, 91, -86, 87, 40, -98, -37, 95, 85, -69, -86, 23], [-64, -27, -99, -38, 2, 15, -48, -77, 6, 51, -69, -65], [95, 4, 59, 6, 1, -67, -51, 38, 2, -33, -14, -5], [45, 91, 11, 13, -45, -31, 6, -3, 47, 76, 59, 75], [-4, -22, 70, -75, -55, -54, 24, -50, -56, 40, -99, -29]]
 print(iary)
