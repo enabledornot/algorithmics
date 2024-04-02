@@ -49,7 +49,7 @@ def explore(i,j,n,current,ary,mask):
     return sum
 # second stage
 def find_distances(mask,weights):
-    minimum_distances = []
+    minimum_distances = [[-1]*len(weights)]
     for i in range(1,len(weights)-1):
         minimum_distances.append(dijkstra_multi(mask,i,len(weights)))
     return minimum_distances
@@ -96,13 +96,44 @@ def find_min_and_remove(to_explore,mask):
     if min == 1000000000000:
         return None
     return to_explore.pop(min_i)
-    
+# 3rd stage
+class most_efficient_path:
+    def __init__(self, node_weights, edge_weights):
+        self.edge = edge_weights
+        self.node = node_weights
+        self.n = len(node_weights)
+    def price_between(self, node_a, node_b):
+        if node_a == node_b:
+            return 0
+        if node_a < node_b:
+            node_t = node_a
+            node_a = node_b
+            node_b = node_t
+        return self.edge[node_b][node_a]
+    def most_efficient(self, current, prev):
+        possible = []
+        for v in range(1,self.n):
+            if v not in prev:
+                potential = self.most_efficient(v,prev + [v])
+                if potential != None:
+                    possible.append(potential - self.price_between(current, v) + self.node[v])
+        if len(possible) > 0:
+            return max(possible)
+        else:
+            return None
+
 iary = rand_int_ary(4)
+iary = [[-18, 73, 10, -8], [76, 67, 25, 11], [-42, -30, -56, -5], [83, -86, 1, -19]]
 print(iary)
 print_ary(iary)
-mary, cc = divide_up(iary)
-print_ary(mary)
-print(cc)
+map_array, node_weights = divide_up(iary)
+print_ary(map_array)
+print(node_weights)
 
-rslt = find_distances(mary,cc)
-print(rslt)
+edge_weights = find_distances(map_array,node_weights)
+print_ary(edge_weights)
+
+mfp = most_efficient_path(node_weights,edge_weights)
+# ipdb.set_trace()
+result = mfp.most_efficient(1,[1])
+print(result)
