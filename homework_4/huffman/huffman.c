@@ -9,6 +9,11 @@ typedef struct HuffmanNode {
     struct HuffmanNode *right;
 } HNode;
 
+typedef struct CharRecord {
+    int length;
+    int data;
+} CR;
+
 void countFrequency(FILE* file, int* counts) {
     int c;
     for(int i = 0; i < 256; i++) {
@@ -41,13 +46,13 @@ HNode* HNode_join(HNode* a, HNode* b) {
     printf("joining %c & %c \n",a->c,b->c);
     HNode* new_node = (HNode*)(malloc(sizeof(HNode)));
     new_node->count = a->count + b->count;
-    new_node->c = NULL;
+    new_node->c = '_';
     new_node->right = a;
     new_node->left = b;
     return new_node;
 }
 
-struct Node* buildHuffmanTree(int* counts) {
+HNode* buildHuffmanTree(int* counts) {
     for(int i = 0; i < 256; i++) {
         printf("%d ",counts[i]);
     }
@@ -86,6 +91,19 @@ struct Node* buildHuffmanTree(int* counts) {
     return root;
 }
 
+void buildHuffmanLookup(CR* charLookup, HNode* root_node, CR current_lookup) {
+    // printf("called\n");
+    if(root_node->left) {
+        CR new_lookup = {current_lookup.length+1,current_lookup.data << 1};
+        buildHuffmanLookup(charLookup,root_node->left,new_lookup);
+        new_lookup.data += 1;
+        buildHuffmanLookup(charLookup,root_node->right,new_lookup);
+    }
+    else {
+        charLookup[root_node->c] = current_lookup;
+    }
+}
+
 int main(int argc, char *argv[]) {
     if(argc != 2) {
         printf("Usage: %s <filename>\n",argv[0]);
@@ -110,6 +128,13 @@ int main(int argc, char *argv[]) {
         // break;
     }
     file = fopen(argv[1],"r");
-    
+    CR charLookup[256];
+    for(int i = 0; i<256; i++) {
+        charLookup[i] = (CR){-1,0};
+    }
+    buildHuffmanLookup(charLookup, root_node, (CR){0,0});
+    for(int i = 0; i<256; i++) {
+        printf("%c - %d - %d\n",(char)i,charLookup[i].length,charLookup[i].data);
+    }
     return 0;
 }
