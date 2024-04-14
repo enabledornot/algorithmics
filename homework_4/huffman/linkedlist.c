@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef struct Node_linked {
     struct Node_linked* next_node;
@@ -32,25 +33,27 @@ void iter_goto_back(Iter* itr) {
     itr->current_node = itr->list->last_node;
 }
 void iter_insert(Iter* itr, void* element) {
+    // printf("insert element %p\n",element);
     Node *new_node = (Node*)(malloc(sizeof(Node)));
     new_node->element = element;
-    if(itr->current_node != NULL) {
+    if(itr->list->first_node != NULL) {
         Node *current = itr->current_node;
         Node *prev = current->prev_node;
         if(prev != NULL) {
             prev->next_node = new_node;
-            new_node->prev_node = prev;
         }
         else {
-            new_node->prev_node = NULL;
+            itr->list->first_node = new_node;
         }
         current->prev_node = new_node;
         new_node->next_node = current;
+        new_node->prev_node = prev;
     }
     else {
         itr->list->first_node = new_node;
         itr->list->last_node = new_node;
         new_node->prev_node = NULL;
+        new_node->next_node = NULL;
     }
     itr->current_node = new_node;
 }
@@ -74,11 +77,13 @@ bool iter_next(Iter* itr) {
     }
     if (itr->current_node->next_node == NULL) {
         itr->current_node = itr->current_node->next_node;
-        return true;
+        return false;
     }
 }
 void* iter_get(Iter* itr) {
-    if(itr->current_node) {
+    printf("%p\n",itr->current_node);
+    if(itr->current_node != NULL) {
+        printf("%p\n",itr->current_node->element);
         return itr->current_node->element;
     }
     else {
