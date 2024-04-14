@@ -33,21 +33,27 @@ void iter_goto_back(Iter* itr) {
     itr->current_node = itr->list->last_node;
 }
 void iter_insert(Iter* itr, void* element) {
-    // printf("insert element %p\n",element);
     Node *new_node = (Node*)(malloc(sizeof(Node)));
     new_node->element = element;
     if(itr->list->first_node != NULL) {
         Node *current = itr->current_node;
-        Node *prev = current->prev_node;
-        if(prev != NULL) {
+        Node *prev;
+        if (current != NULL) {
+            prev = current->prev_node;
+            current->prev_node = new_node;
+        }
+        else {
+            prev = itr->list->last_node;
+            itr->list->last_node = new_node;
+        }
+        if (prev != NULL) {
             prev->next_node = new_node;
         }
         else {
             itr->list->first_node = new_node;
         }
-        current->prev_node = new_node;
-        new_node->next_node = current;
         new_node->prev_node = prev;
+        new_node->next_node = current;
     }
     else {
         itr->list->first_node = new_node;
@@ -55,7 +61,7 @@ void iter_insert(Iter* itr, void* element) {
         new_node->prev_node = NULL;
         new_node->next_node = NULL;
     }
-    itr->current_node = new_node;
+    // itr->current_node = new_node;
 }
 void* iter_remove(Iter* itr) {
     Node* prev_node = itr->current_node->prev_node;
@@ -75,15 +81,13 @@ bool iter_next(Iter* itr) {
     if (itr->current_node == NULL) {
         return false;
     }
-    if (itr->current_node->next_node == NULL) {
-        itr->current_node = itr->current_node->next_node;
-        return false;
-    }
+    itr->current_node = itr->current_node->next_node;
+    return true;
 }
 void* iter_get(Iter* itr) {
-    printf("%p\n",itr->current_node);
+    // printf("%p\n",itr->current_node);
     if(itr->current_node != NULL) {
-        printf("%p\n",itr->current_node->element);
+        // printf("%p\n",itr->current_node->element);
         return itr->current_node->element;
     }
     else {

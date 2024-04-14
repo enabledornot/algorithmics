@@ -11,15 +11,30 @@ int main(int argc, char *argv[]) {
     }
     // iter_insert(itr,ptr);
     iter_insert(itr,(void*)15);
+    iter_insert(itr,(void*)18);
+    iter_goto_front(itr);
+    iter_next(itr);
+    iter_next(itr);
+    iter_insert(itr,(void*)100);
+    iter_next(itr);
+    // printf()
+    printf("itr get %p\n",iter_get(itr));
+    // printf("itr next %d\n",iter_next(itr));
+    // printf("itr get %p\n",iter_get(itr));
+    // printf("itr next %d\n",iter_next(itr));
+    // printf("itr get %p\n",iter_get(itr));
+    // printf("itr next %d\n",iter_next(itr));
+    // printf("itr get %p\n",iter_get(itr));
     free(itr);
     itr = create_iter(LL);
     void* num = iter_get(itr);
+    printf("\nbegin loop\n");
     while(num) {
+        num = iter_get(itr);
         bool cond = iter_next(itr);
         printf("status - %d\n",cond);
-        num = iter_get(itr);
         printf("%p\n",num);
-        break;
+        // break;
     }
-    printf("%d\n",(int)num);
+    // printf("%d\n",(int)num);
 }
