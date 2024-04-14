@@ -37,6 +37,15 @@ void insert_sorted(LinkedList* LL, HNode* new_node) {
     free(itr);
 }
 
+HNode* HNode_join(HNode* a, HNode* b) {
+    HNode* new_node = (HNode*)(malloc(sizeof(HNode)));
+    new_node->count = a->count + b->count;
+    new_node->c = NULL;
+    new_node->right = a;
+    new_node->left = b;
+    return new_node;
+}
+
 struct Node* buildHuffmanTree(int* counts) {
     for(int i = 0; i < 256; i++) {
         printf("%d ",counts[i]);
@@ -59,8 +68,16 @@ struct Node* buildHuffmanTree(int* counts) {
         iter_next(itr);
         current_node = iter_get(itr);
     }
-    free(itr);
-    return NULL;
+    // free(itr);
+
+    iter_goto_front(itr);
+    while(LL->size != 1) {
+        HNode* a = iter_remove(itr);
+        HNode* b = iter_remove(itr);
+        HNode* new = HNode_join(a,b);
+        insert_sorted(LL,new);
+    }
+    return iter_get(itr);
 }
 
 int main(int argc, char *argv[]) {

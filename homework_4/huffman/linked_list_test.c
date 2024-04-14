@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
     iter_insert(itr,(void*)18);
     iter_goto_front(itr);
     iter_next(itr);
+    iter_remove(itr);
     iter_next(itr);
     iter_insert(itr,(void*)100);
     iter_next(itr);
