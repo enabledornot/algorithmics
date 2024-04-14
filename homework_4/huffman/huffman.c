@@ -38,6 +38,7 @@ void insert_sorted(LinkedList* LL, HNode* new_node) {
 }
 
 HNode* HNode_join(HNode* a, HNode* b) {
+    printf("joining %c & %c \n",a->c,b->c);
     HNode* new_node = (HNode*)(malloc(sizeof(HNode)));
     new_node->count = a->count + b->count;
     new_node->c = NULL;
@@ -53,12 +54,14 @@ struct Node* buildHuffmanTree(int* counts) {
     printf("\n");
     LinkedList* LL = create_linked();
     for(int i = 0; i < 256; i++) {
-        HNode* new_node = (HNode*)(malloc(sizeof(HNode)));
-        new_node->count = counts[i];
-        new_node->c = (char)(i);
-        new_node->right = NULL;
-        new_node->left = NULL;
-        insert_sorted(LL, new_node);
+        if(counts[i]) {
+            HNode* new_node = (HNode*)(malloc(sizeof(HNode)));
+            new_node->count = counts[i];
+            new_node->c = (char)(i);
+            new_node->right = NULL;
+            new_node->left = NULL;
+            insert_sorted(LL, new_node);
+        }
     }
     Iter* itr = create_iter(LL);
     HNode* current_node = iter_get(itr);
@@ -70,14 +73,17 @@ struct Node* buildHuffmanTree(int* counts) {
     }
     // free(itr);
 
-    iter_goto_front(itr);
     while(LL->size != 1) {
+        iter_goto_front(itr);
         HNode* a = iter_remove(itr);
         HNode* b = iter_remove(itr);
         HNode* new = HNode_join(a,b);
         insert_sorted(LL,new);
     }
-    return iter_get(itr);
+    iter_goto_front(itr);
+    HNode* root = iter_get(itr);
+    free(itr);
+    return root;
 }
 
 int main(int argc, char *argv[]) {
@@ -92,8 +98,18 @@ int main(int argc, char *argv[]) {
     }
     int counts[256];
     countFrequency(file, counts);
-    printf("\n");
-    buildHuffmanTree(counts);
     fclose(file);
+    printf("\n");
+    HNode* root_node = buildHuffmanTree(counts);
+    HNode* current_node = root_node;
+    printf("%p\n",current_node);
+    printf("the tree\n");
+    while (current_node) {
+        printf("%d\n",current_node->count);
+        current_node = current_node->right;
+        // break;
+    }
+    file = fopen(argv[1],"r");
+    
     return 0;
 }
