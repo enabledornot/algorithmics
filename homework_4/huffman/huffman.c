@@ -4,7 +4,7 @@
 
 typedef struct HuffmanNode {
     int count;
-    char c;
+    int c;
     struct HuffmanNode *left;
     struct HuffmanNode *right;
 } HNode;
@@ -58,11 +58,18 @@ HNode* buildHuffmanTree(int* counts) {
     }
     printf("\n");
     LinkedList* LL = create_linked();
+    HNode* end_node = (HNode*)(malloc(sizeof(HNode)));
+    end_node->count = 1;
+    end_node->c = 256;
+    end_node->left = NULL;
+    end_node->right = (HNode*)(1);
+    insert_sorted(LL,end_node);
     for(int i = 0; i < 256; i++) {
         if(counts[i]) {
+            printf("i = %d\n",i);
             HNode* new_node = (HNode*)(malloc(sizeof(HNode)));
             new_node->count = counts[i];
-            new_node->c = (char)(i);
+            new_node->c = i;
             new_node->right = NULL;
             new_node->left = NULL;
             insert_sorted(LL, new_node);
@@ -72,7 +79,8 @@ HNode* buildHuffmanTree(int* counts) {
     HNode* current_node = iter_get(itr);
     // printf("%p\n",current_node);
     while(current_node != NULL) {
-        printf("%d\n",current_node->count);
+        int c_id = current_node->c;
+        printf("[%d] %c  -%d\n",c_id,current_node->c,current_node->count);
         iter_next(itr);
         current_node = iter_get(itr);
     }
@@ -100,7 +108,8 @@ void buildHuffmanLookup(CR* charLookup, HNode* root_node, CR current_lookup) {
         buildHuffmanLookup(charLookup,root_node->right,new_lookup);
     }
     else {
-        charLookup[root_node->c] = current_lookup;
+        int c_id = (int)root_node->c;
+        charLookup[c_id] = current_lookup;
     }
 }
 
@@ -128,13 +137,13 @@ int main(int argc, char *argv[]) {
         // break;
     }
     file = fopen(argv[1],"r");
-    CR charLookup[256];
-    for(int i = 0; i<256; i++) {
+    CR charLookup[257];
+    for(int i = 0; i<257; i++) {
         charLookup[i] = (CR){-1,0};
     }
     buildHuffmanLookup(charLookup, root_node, (CR){0,0});
-    for(int i = 0; i<256; i++) {
-        printf("%c - %d - %d\n",(char)i,charLookup[i].length,charLookup[i].data);
+    for(int i = 0; i<257; i++) {
+        printf("[%d] %c - %d - %d\n",i,(char)i,charLookup[i].length,charLookup[i].data);
     }
     return 0;
 }
