@@ -79,8 +79,7 @@ HNode* buildHuffmanTree(int* counts) {
     HNode* current_node = iter_get(itr);
     // printf("%p\n",current_node);
     while(current_node != NULL) {
-        int c_id = current_node->c;
-        printf("[%d] %c  -%d\n",c_id,current_node->c,current_node->count);
+        printf("[%d] %c  -%d\n",current_node->c,current_node->c,current_node->count);
         iter_next(itr);
         current_node = iter_get(itr);
     }
@@ -108,8 +107,26 @@ void buildHuffmanLookup(CR* charLookup, HNode* root_node, CR current_lookup) {
         buildHuffmanLookup(charLookup,root_node->right,new_lookup);
     }
     else {
-        int c_id = (int)root_node->c;
-        charLookup[c_id] = current_lookup;
+        charLookup[root_node->c] = current_lookup;
+    }
+}
+
+void encodeFile(FILE* file, CR* charLookup) {
+    int c;
+    int rem_offset = 0;
+    char toPrint = (char)0;
+    while ((c = fgetc(file)) != EOF) {
+        int rem_length = charLookup[c].length;
+        int rem_data = charLookup[c].data;
+        if (rem_offset > rem_data) {
+            toPrint = toPrint & rem_data << (rem_length-rem_offset);
+            rem_offset -= rem_length;
+        }
+        else {
+            while () {
+                
+            }
+        }
     }
 }
 
@@ -133,10 +150,9 @@ int main(int argc, char *argv[]) {
     printf("the tree\n");
     while (current_node) {
         printf("%d\n",current_node->count);
-        current_node = current_node->right;
+        current_node = current_node->left;
         // break;
     }
-    file = fopen(argv[1],"r");
     CR charLookup[257];
     for(int i = 0; i<257; i++) {
         charLookup[i] = (CR){-1,0};
@@ -145,5 +161,9 @@ int main(int argc, char *argv[]) {
     for(int i = 0; i<257; i++) {
         printf("[%d] %c - %d - %d\n",i,(char)i,charLookup[i].length,charLookup[i].data);
     }
+    file = fopen(argv[1],"r");
+
+    encodeFile(file,charLookup);
+    fclose(file);
     return 0;
 }
