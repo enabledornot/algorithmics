@@ -14,6 +14,27 @@ typedef struct CharRecord {
     int data;
 } CR;
 
+char binaryString[33];
+
+char* toBinary(int input, int len) {
+    input = input << 32-len;
+    binaryString[32] = '\0';
+    for(int i = 0;i<32;i++) {
+        if(i == len) {
+            binaryString[i] = '\0';
+            break;
+        }
+        if (input < 0) {
+            binaryString[i] = '1';
+        }
+        else {
+            binaryString[i] = '0';
+        }
+        input = input << 1;
+    }
+    return binaryString;
+}
+
 void countFrequency(FILE* file, int* counts) {
     int c;
     for(int i = 0; i < 256; i++) {
@@ -114,20 +135,34 @@ void buildHuffmanLookup(CR* charLookup, HNode* root_node, CR current_lookup) {
 void encodeFile(FILE* file, CR* charLookup) {
     int c;
     int rem_offset = 0;
-    char toPrint = (char)0;
+    int toPrint = 0;
     while ((c = fgetc(file)) != EOF) {
         int rem_length = charLookup[c].length;
         int rem_data = charLookup[c].data;
-        if (rem_offset > rem_data) {
-            toPrint = toPrint & rem_data << (rem_length-rem_offset);
-            rem_offset -= rem_length;
+        // printf("rem_data %x\n",rem_data << (32 - rem_length - rem_offset));
+        int potential_shift = 32 - rem_length - rem_offset;
+        if (potential_shift >= 0) {
+            toPrint = toPrint | rem_data << (32 - rem_length - rem_offset);
         }
         else {
-            while () {
-                
-            }
+            toPrint = toPrint | rem_data >> -1*(32 - rem_length - rem_offset);
+        }
+        // printf("%c-%d,%s ",c,32 - rem_length - rem_offset,toBinary(rem_data << (32 - rem_length - rem_offset), 32));
+        // continue;
+        toPrint = toPrint | rem_data << (32 - rem_length - rem_offset);
+        rem_offset += rem_length;
+        if(rem_offset >= 32) {
+            // printf("%x ",toPrint);
+            printf("%s ",toBinary(toPrint,32));
+            toPrint = rem_data << (64 - rem_offset);
+            // printf("%d ",(64 - rem_offset));
+            // toPrint = toPrint << (rem_offset - rem_length);
+            // printf("%s ",toBinary(toPrint,32));
+            rem_offset = rem_offset - 32;
         }
     }
+    printf("%s",toBinary(toPrint,32));
+    printf("\n");
 }
 
 int main(int argc, char *argv[]) {
@@ -158,11 +193,13 @@ int main(int argc, char *argv[]) {
         charLookup[i] = (CR){-1,0};
     }
     buildHuffmanLookup(charLookup, root_node, (CR){0,0});
+    printf("printing lookup\n");
     for(int i = 0; i<257; i++) {
-        printf("[%d] %c - %d - %d\n",i,(char)i,charLookup[i].length,charLookup[i].data);
+        if(charLookup[i].length != -1)
+        printf("[%d] %c - %d - %s\n",i,(char)i,charLookup[i].length,toBinary(charLookup[i].data,charLookup[i].length));
     }
     file = fopen(argv[1],"r");
-
+    printf("printing encoding\n");
     encodeFile(file,charLookup);
     fclose(file);
     return 0;
