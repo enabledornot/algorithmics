@@ -134,19 +134,19 @@ void buildHuffmanLookup(CR* charLookup, HNode* root_node, CR current_lookup) {
 
 int rem_offset = 0;
 int toPrint = 0;
-void encodeBytes(int rem_length, int rem_data) {
-    int potential_shift = 32 - rem_length - rem_offset;
+void encodeBytes(CR code) {
+    int potential_shift = 32 - code.length - rem_offset;
     if (potential_shift >= 0) {
-        toPrint = toPrint | rem_data << (32 - rem_length - rem_offset);
+        toPrint = toPrint | code.data << (32 - code.length - rem_offset);
     }
     else {
-        toPrint = toPrint | rem_data >> -1*(32 - rem_length - rem_offset);
+        toPrint = toPrint | code.data >> -1*(32 - code.length - rem_offset);
     }
-    rem_offset += rem_length;
+    rem_offset += code.length;
     if(rem_offset >= 32) {
         printf("%s ",toBinary(toPrint,32));
         toPrint = 0;
-        int shifted = rem_data << (64 - rem_offset);
+        int shifted = code.data << (64 - rem_offset);
         if(rem_offset != 32) {
             toPrint = toPrint | shifted;
         }
@@ -157,11 +157,9 @@ void encodeBytes(int rem_length, int rem_data) {
 void encodeFile(FILE* file, CR* charLookup) {
     int c;
     while ((c = fgetc(file)) != EOF) {
-        int rem_length = charLookup[c].length;
-        int rem_data = charLookup[c].data;
-        encodeBytes(rem_length,rem_data);
+        encodeBytes(charLookup[c]);
     }
-    encodeBytes(charLookup[256].length,charLookup[256].data);
+    encodeBytes(charLookup[256]);
     printf("%s",toBinary(toPrint,32));
     printf("\n");
 }
