@@ -130,7 +130,8 @@ void encodeBytes(CR code) {
     }
     rem_offset += code.length;
     if(rem_offset >= 32) {
-        printf("%s ",toBinary(toPrint,32));
+        fwrite(&toPrint, 1, 4, stdout);
+        // printf("%s ",toBinary(toPrint,32));
         toPrint = 0;
         int shifted = code.data << (64 - rem_offset);
         // Bitshifts are not completed if they are equal to 32
@@ -148,7 +149,7 @@ void encodeFile(FILE* file, CR* charLookup) {
         encodeBytes(charLookup[c]);
     }
     encodeBytes(charLookup[256]);
-    printf("%s",toBinary(toPrint,32));
+    fwrite(&toPrint, 1, 4, stdout);
 }
 
 int encodeEverything(char* file_name) {
@@ -160,6 +161,8 @@ int encodeEverything(char* file_name) {
     }
     int counts[256];
     countFrequency(file, counts);
+    fwrite(counts, 4, 256, stdout);
+    fflush(stdout);
     fclose(file);
     HNode* root_node = buildHuffmanTree(counts);
     HNode* current_node = root_node;
