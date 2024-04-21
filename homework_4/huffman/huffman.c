@@ -131,7 +131,6 @@ void encodeBytes(CR code) {
     rem_offset += code.length;
     if(rem_offset >= 32) {
         fwrite(&toPrint, 1, 4, stdout);
-        // printf("%s ",toBinary(toPrint,32));
         toPrint = 0;
         int shifted = code.data << (64 - rem_offset);
         // Bitshifts are not completed if they are equal to 32
@@ -206,7 +205,6 @@ int decodeEverything() {
 }
 
 int main(int argc, char *argv[]) {
-    // printf("%d\n",argc);
     if(argc == 2) {
         return encodeEverything(argv[1]);
     }
