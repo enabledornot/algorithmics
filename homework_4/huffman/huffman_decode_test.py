@@ -1,15 +1,13 @@
 import re
 # import Math
 def decodeAll(lines):
-    decoded = []
-    for line in lines:
-        pattern = r"\[(\d+)\]\s*([a-zA-Z]?)\s*-\s*\d+\s*-\s*([01]+)"
-        matches = re.findall(pattern, line)
-        if len(matches) > 0:
-            decoded.append(matches[0])
     lookupDict = {}
-    for decode in decoded:
-        lookupDict[decode[2]] = chr(int(decode[0]))
+    for line in lines[:-1]:
+        # pattern = r"\[(\d+)\]\s*([a-zA-Z]?)\s*-\s*\d+\s*-\s*([01]+)"
+        # matches = re.findall(pattern, line)
+        carcodes = int(line[1:4])
+        carencode = line[6:38].replace(" ","")
+        lookupDict[carencode] = chr(carcodes)
     return lookupDict
 with open("output.txt","r") as f:
     output = f.read().split("\n")
@@ -18,6 +16,20 @@ lookupIndex = output.index("printing lookup") + 1
 encodingIndex = output.index("printing encoding") + 1
 encoding = output[lookupIndex:encodingIndex]
 decoding = decodeAll(encoding)
+print(decoding)
+# for line in output[encodingIndex:-2]:
+#     supposed_char = line[0]
+#     encoded_data_unmasked = line[4:36]
+#     data_start = int(line[39:42])
+#     data_end = int(line[43:46])
+#     try:
+#         decoded = decoding[encoded_data_unmasked[data_start:data_end]]
+#         print(decoded)
+#     except:
+#         print(supposed_char + "?")
+#         print(encoded_data_unmasked)
+#         print(data_start)
+#         print(data_end)
 cbuff = ""
 decode_buffer = []
 cnt = 0
@@ -26,8 +38,6 @@ for c in output[encodingIndex]:
         cbuff += '_'
         continue
     cbuff += c
-    # if cnt % 32 == 31:
-    #     decode_buffer.append(())
     if cbuff.replace("_","") in decoding:
         print(decoding[cbuff.replace("_","")],end="")
         decode_buffer.append((decoding[cbuff.replace("_","")],cbuff))

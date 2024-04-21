@@ -139,7 +139,6 @@ void encodeFile(FILE* file, CR* charLookup) {
     while ((c = fgetc(file)) != EOF) {
         int rem_length = charLookup[c].length;
         int rem_data = charLookup[c].data;
-        // printf("rem_data %x\n",rem_data << (32 - rem_length - rem_offset));
         int potential_shift = 32 - rem_length - rem_offset;
         if (potential_shift >= 0) {
             toPrint = toPrint | rem_data << (32 - rem_length - rem_offset);
@@ -147,17 +146,14 @@ void encodeFile(FILE* file, CR* charLookup) {
         else {
             toPrint = toPrint | rem_data >> -1*(32 - rem_length - rem_offset);
         }
-        // printf("%c-%d,%s ",c,32 - rem_length - rem_offset,toBinary(rem_data << (32 - rem_length - rem_offset), 32));
-        // continue;
-        toPrint = toPrint | rem_data << (32 - rem_length - rem_offset);
         rem_offset += rem_length;
         if(rem_offset >= 32) {
-            // printf("%x ",toPrint);
             printf("%s ",toBinary(toPrint,32));
-            toPrint = rem_data << (64 - rem_offset);
-            // printf("%d ",(64 - rem_offset));
-            // toPrint = toPrint << (rem_offset - rem_length);
-            // printf("%s ",toBinary(toPrint,32));
+            toPrint = 0;
+            int shifted = rem_data << (64 - rem_offset);
+            if(rem_offset != 32) {
+                toPrint = toPrint | shifted;
+            }
             rem_offset = rem_offset - 32;
         }
     }
@@ -196,7 +192,7 @@ int main(int argc, char *argv[]) {
     printf("printing lookup\n");
     for(int i = 0; i<257; i++) {
         if(charLookup[i].length != -1)
-        printf("[%d] %c - %d - %s\n",i,(char)i,charLookup[i].length,toBinary(charLookup[i].data,charLookup[i].length));
+        printf("[%3d] %32s - %c - %d\n",i,toBinary(charLookup[i].data,charLookup[i].length),(char)i,charLookup[i].length);
     }
     file = fopen(argv[1],"r");
     printf("printing encoding\n");
