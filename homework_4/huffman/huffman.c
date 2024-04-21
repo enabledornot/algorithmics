@@ -147,6 +147,8 @@ void encodeBytes(CR code) {
         printf("%s ",toBinary(toPrint,32));
         toPrint = 0;
         int shifted = code.data << (64 - rem_offset);
+        // Bitshifts are not completed if they are equal to 32
+        // This condition is added to account for that case
         if(rem_offset != 32) {
             toPrint = toPrint | shifted;
         }
@@ -164,14 +166,11 @@ void encodeFile(FILE* file, CR* charLookup) {
     printf("\n");
 }
 
-int main(int argc, char *argv[]) {
-    if(argc != 2) {
-        printf("Usage: %s <filename>\n",argv[0]);
-    }
-    FILE* file = fopen(argv[1],"r");
+int encodeEverything(char* file_name) {
+    FILE* file = fopen(file_name,"r");
 
     if(file == NULL) {
-        printf("Error opening file %s\n",argv[1]);
+        printf("Error opening file %s\n",file_name);
         return 1;
     }
     int counts[256];
@@ -197,9 +196,15 @@ int main(int argc, char *argv[]) {
         if(charLookup[i].length != -1)
         printf("[%3d] %32s - %c - %d\n",i,toBinary(charLookup[i].data,charLookup[i].length),(char)i,charLookup[i].length);
     }
-    file = fopen(argv[1],"r");
+    file = fopen(file_name,"r");
     printf("printing encoding\n");
     encodeFile(file,charLookup);
     fclose(file);
-    return 0;
+}
+
+int main(int argc, char *argv[]) {
+    if(argc != 2) {
+        printf("Usage: %s <filename>\n",argv[0]);
+    }
+    return encodeEverything(argv[1]);
 }
