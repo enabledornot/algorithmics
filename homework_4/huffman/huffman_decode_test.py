@@ -7,7 +7,7 @@ def decodeAll(lines):
         # matches = re.findall(pattern, line)
         carcodes = int(line[1:4])
         carencode = line[6:38].replace(" ","")
-        lookupDict[carencode] = chr(carcodes)
+        lookupDict[carencode] = carcodes
     return lookupDict
 with open("output.txt","r") as f:
     output = f.read().split("\n")
@@ -39,8 +39,13 @@ for c in output[encodingIndex]:
         continue
     cbuff += c
     if cbuff.replace("_","") in decoding:
-        print(decoding[cbuff.replace("_","")],end="")
-        decode_buffer.append((decoding[cbuff.replace("_","")],cbuff))
+        decoded = decoding[cbuff.replace("_","")]
+        if decoded == 256:
+            break
+        else:
+            decoded = chr(decoded)
+        print(decoded,end="")
+        decode_buffer.append((decoded,cbuff))
         cbuff = ""
     cnt += 1
 print("")
