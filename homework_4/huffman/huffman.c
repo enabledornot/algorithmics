@@ -152,6 +152,29 @@ void encodeFile(FILE* file, CR* charLookup) {
     fwrite(&toPrint, 1, 4, stdout);
 }
 
+void decodeFile(HNode* root_node) {
+    HNode* current_node = root_node;
+    int buff = 0;
+    while(fread(&buff,4,1,stdin) == 1) {
+        for(int i = 0;i<32;i++) {
+            if (buff >= 0) {
+                current_node = current_node->left;
+            }
+            else {
+                current_node = current_node->right;
+            }
+            if (!(current_node->left)) {
+                if(current_node->c == 256) {
+                    break;
+                }
+                fwrite(&current_node->c, 1, 1, stdout);
+                current_node = root_node;
+            }
+            buff = buff << 1;
+        }
+    }
+}
+
 int encodeEverything(char* file_name) {
     FILE* file = fopen(file_name,"r");
 
@@ -162,7 +185,6 @@ int encodeEverything(char* file_name) {
     int counts[256];
     countFrequency(file, counts);
     fwrite(counts, 4, 256, stdout);
-    fflush(stdout);
     fclose(file);
     HNode* root_node = buildHuffmanTree(counts);
     HNode* current_node = root_node;
@@ -176,9 +198,19 @@ int encodeEverything(char* file_name) {
     fclose(file);
 }
 
+int decodeEverything() {
+    int counts[256];
+    fread(counts, 4, 256, stdin);
+    HNode* root_node = buildHuffmanTree(counts);
+    decodeFile(root_node);
+}
+
 int main(int argc, char *argv[]) {
-    if(argc != 2) {
-        printf("Usage: %s <filename>\n",argv[0]);
+    // printf("%d\n",argc);
+    if(argc == 2) {
+        return encodeEverything(argv[1]);
     }
-    return encodeEverything(argv[1]);
+    else {
+        return decodeEverything();
+    }
 }
