@@ -46,13 +46,9 @@ void countFrequency(FILE* file, int* counts) {
 }
 
 void insert_sorted(LinkedList* LL, HNode* new_node) {
-    // printf("call\n");
     Iter* itr = create_iter(LL);
     HNode* current_node = iter_get(itr);
-    // printf("%p\n",current_node);
     while(current_node) {
-        // printf("%d\n",current_node->count);
-        // printf("%p - itr\n",current_node);
         if(new_node->count < current_node->count) {
             break;
         }
@@ -64,7 +60,6 @@ void insert_sorted(LinkedList* LL, HNode* new_node) {
 }
 
 HNode* HNode_join(HNode* a, HNode* b) {
-    printf("joining %c & %c \n",a->c,b->c);
     HNode* new_node = (HNode*)(malloc(sizeof(HNode)));
     new_node->count = a->count + b->count;
     new_node->c = '_';
@@ -74,10 +69,6 @@ HNode* HNode_join(HNode* a, HNode* b) {
 }
 
 HNode* buildHuffmanTree(int* counts) {
-    for(int i = 0; i < 256; i++) {
-        printf("%d ",counts[i]);
-    }
-    printf("\n");
     LinkedList* LL = create_linked();
     HNode* end_node = (HNode*)(malloc(sizeof(HNode)));
     end_node->count = 1;
@@ -87,7 +78,6 @@ HNode* buildHuffmanTree(int* counts) {
     insert_sorted(LL,end_node);
     for(int i = 0; i < 256; i++) {
         if(counts[i]) {
-            printf("i = %d\n",i);
             HNode* new_node = (HNode*)(malloc(sizeof(HNode)));
             new_node->count = counts[i];
             new_node->c = i;
@@ -98,13 +88,10 @@ HNode* buildHuffmanTree(int* counts) {
     }
     Iter* itr = create_iter(LL);
     HNode* current_node = iter_get(itr);
-    // printf("%p\n",current_node);
     while(current_node != NULL) {
-        printf("[%d] %c  -%d\n",current_node->c,current_node->c,current_node->count);
         iter_next(itr);
         current_node = iter_get(itr);
     }
-    // free(itr);
 
     while(LL->size != 1) {
         iter_goto_front(itr);
@@ -120,7 +107,6 @@ HNode* buildHuffmanTree(int* counts) {
 }
 
 void buildHuffmanLookup(CR* charLookup, HNode* root_node, CR current_lookup) {
-    // printf("called\n");
     if(root_node->left) {
         CR new_lookup = {current_lookup.length+1,current_lookup.data << 1};
         buildHuffmanLookup(charLookup,root_node->left,new_lookup);
@@ -163,7 +149,6 @@ void encodeFile(FILE* file, CR* charLookup) {
     }
     encodeBytes(charLookup[256]);
     printf("%s",toBinary(toPrint,32));
-    printf("\n");
 }
 
 int encodeEverything(char* file_name) {
@@ -176,28 +161,14 @@ int encodeEverything(char* file_name) {
     int counts[256];
     countFrequency(file, counts);
     fclose(file);
-    printf("\n");
     HNode* root_node = buildHuffmanTree(counts);
     HNode* current_node = root_node;
-    printf("%p\n",current_node);
-    printf("the tree\n");
-    while (current_node) {
-        printf("%d\n",current_node->count);
-        current_node = current_node->left;
-        // break;
-    }
     CR charLookup[257];
     for(int i = 0; i<257; i++) {
         charLookup[i] = (CR){-1,0};
     }
     buildHuffmanLookup(charLookup, root_node, (CR){0,0});
-    printf("printing lookup\n");
-    for(int i = 0; i<257; i++) {
-        if(charLookup[i].length != -1)
-        printf("[%3d] %32s - %c - %d\n",i,toBinary(charLookup[i].data,charLookup[i].length),(char)i,charLookup[i].length);
-    }
     file = fopen(file_name,"r");
-    printf("printing encoding\n");
     encodeFile(file,charLookup);
     fclose(file);
 }
