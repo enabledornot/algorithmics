@@ -1,3 +1,8 @@
+// This is an alternative prime finder algorithm which uses
+// A list of the previous primes which it checks
+// To see if they are divisible
+// This algorithm is much slower than all the other Siv based algorithms
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -26,7 +31,7 @@ void print_primes(int* prime_list) {
     printf("\n");
 }
 
-int main(int argc, char *argv[]) {
+int calculate_primes() {
     int prime_list[NUMBER_PRIMES] = {0};
     int prime_count = 0;
     for(int i = 2;i<UPPER_BOUND;i++) {
@@ -38,4 +43,10 @@ int main(int argc, char *argv[]) {
     }
     printf("%d\n",prime_list[prime_count-1]);
 
+}
+
+int main(int argc, char *argv[]) {
+    for(int i = 0;i<100;i++) {
+        calculate_primes();
+    }
 }

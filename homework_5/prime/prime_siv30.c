@@ -1,10 +1,16 @@
+// This is a prime siv but with the factors of 2,3,5 removed from the beginning
+// Since there is only 8 numbers between 0 and 30 which are not this is stored in a single bit
+// This algorithm is about 2x slower than the regular prime_siv2 however it does use less memory
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define UPPER_BOUND 1000000
+// #define UPPER_BOUND 1000000
 // Upper_Bound * (8/30)
-#define UPPER_BOUND_ARY 33334
+// #define UPPER_BOUND_ARY 33334
+#define UPPER_BOUND 240000000
+#define UPPER_BOUND_ARY 8000000
 const int MAGIC_ARRAY[] = {1,7,11,13,17,19,23,29};
 const unsigned char BITMASK[] = {128,64,32,16,8,4,2,1};
 

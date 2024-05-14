@@ -1,3 +1,5 @@
+// This is just a normal prime siv program
+
 #include <stdio.h>
 #include <stdlib.h>
 

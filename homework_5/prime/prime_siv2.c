@@ -1,3 +1,7 @@
+// This is just a prime siv except it only stores every other bit
+// Since most primes are not even.
+// This algorithm actually ended up being twice as fast as the regular prime_siv
+
 #include <stdio.h>
 #include <stdlib.h>
 

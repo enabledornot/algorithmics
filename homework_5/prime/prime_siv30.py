@@ -1,3 +1,7 @@
+# Note this python program does not actually find prime numbers
+# It was created to demonstrate that one part of the algorithm was functional
+# (the special addition algorithm)
+
 import random
 magic_array = [1,7,11,13,17,19,23,29]
 class special_set:
